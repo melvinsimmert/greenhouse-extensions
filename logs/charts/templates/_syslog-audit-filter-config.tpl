@@ -103,9 +103,12 @@ transform/syslog_semconv_normalization:
 
         # Resource: host identity
         # Transforms host.name from fqdn to short-name
-        - 'set(resource.attributes["host.name"], log.attributes["hostname"]) where resource.attributes["host.name"] == nil and log.attributes["hostname"] != nil'
+        - 'set(resource.attributes["host.name"], log.attributes["hostname"]) where log.attributes["hostname"] != nil and log.attributes["hostname"] != "-"'
         - 'set(resource.attributes["host.name"], Split(resource.attributes["host.name"], ".")[0]) where resource.attributes["host.name"] != nil and IsString(resource.attributes["host.name"]) and IsMatch(resource.attributes["host.name"], ".*\\..*") and IsMatch(resource.attributes["host.name"], ".*[A-Za-z].*")'
         - 'replace_pattern(resource.attributes["host.name"], ":", "") where resource.attributes["host.name"] != nil and IsString(resource.attributes["host.name"]) and IsMatch(resource.attributes["host.name"], ".*:.*")'
+
+        # Cloud fields
+        - 'set(resource.attributes["cloud.region"], log.attributes["region"]) where resource.attributes["cloud.region"] == nil and log.attributes["region"] != nil'
 
 {{/*
   ============================================================================
@@ -142,6 +145,9 @@ transform/syslog_drop_legacy_fields:
 
         # Resource-mapped: hostname → resource.host.name
         - 'delete_key(log.attributes, "hostname") where resource.attributes["host.name"] != nil'
+
+        # Cloud fields
+        - 'delete_key(log.attributes, "region") where resource.attributes["cloud.region"] != nil'
 
 {{/*
   ============================================================================
