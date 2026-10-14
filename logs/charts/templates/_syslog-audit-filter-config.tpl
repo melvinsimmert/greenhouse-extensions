@@ -281,7 +281,7 @@ transform/octobus_to_fortlogs_normalization:
 
         # ===== EVENT CLASSIFICATION =====
         - 'set(log.attributes["event.type"], log.attributes["event_type"]) where log.attributes["event_type"] != nil'
-        - 'set(log.attributes["event.category"], log.attributes["event_SubType"]) where log.attributes["event_SubType"] != nil'
+        - 'set(log.attributes["event.sub_type"], log.attributes["event_SubType"]) where log.attributes["event_SubType"] != nil'
         - 'set(log.attributes["event.action"], log.attributes["SimplifiedDeviceAction"]) where log.attributes["SimplifiedDeviceAction"] != nil'
         - 'set(log.attributes["event.message"], log.attributes["msg"]) where log.attributes["msg"] != nil'
         - 'set(log.attributes["event.reason"], log.attributes["event_reason"]) where log.attributes["event_reason"] != nil'
