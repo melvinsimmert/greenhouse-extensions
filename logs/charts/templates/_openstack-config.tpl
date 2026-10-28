@@ -66,7 +66,11 @@ transform/openstack_api:
       statements:
         - merge_maps(log.attributes, ExtractGrokPatterns(log.body, "%{TIMESTAMP_ISO8601} %{NOTSPACE} %{NOTSPACE:log.level} %{NOTSPACE:logger} (\\[)?(req-)%{NOTSPACE:request.id} ?(g%{NOTSPACE:global.request.id}) ?%{NOTSPACE:user.id} ?%{NOTSPACE:project.id} ?%{NOTSPACE:domain.id} ?%{NOTSPACE:user.domain.id} ?%{NOTSPACE:project.domain.id}\\] %{IPV4:ip.client}(,%{IPV4:ip.target})? \"%{WORD:http.request.method} %{NOTSPACE:url.path} HTTP/%{NOTSPACE}\" %{NOTSPACE} %{NUMBER:http.response.status_code}?( ).*%{NOTSPACE} %{NUMBER:http.response.body.size:int} %{NOTSPACE} %{BASE10NUM:request.time:float} ?%{NOTSPACE} ?%{NOTSPACE:agent}", true), "upsert")
         - merge_maps(log.attributes, ExtractGrokPatterns(log.body, "%{TIMESTAMP_ISO8601} %{NOTSPACE} %{NOTSPACE:log.level} %{NOTSPACE:logger} (\\[)?(req-)%{NOTSPACE:request.id} ?(g%{NOTSPACE:global.request.id}) ?%{NOTSPACE:user.id} ?%{NOTSPACE:project.id} ?%{NOTSPACE:domain.id} ?%{NOTSPACE:user.domain.id} ?%{NOTSPACE:project.domain.id}\\]", true), "upsert")
-
+    - context: log
+      conditions:
+        - resource.attributes["k8s.deployment.name"] == "barbican-api"
+      statements:
+        - 'set(log.attributes["audit_relevant"], "true")'
 transform/non_openstack:
   error_mode: ignore
   log_statements:
