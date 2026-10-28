@@ -71,6 +71,7 @@ transform/openstack_api:
         - resource.attributes["k8s.deployment.name"] == "barbican-api"
       statements:
         - 'set(log.attributes["audit_relevant"], "true")'
+
 transform/non_openstack:
   error_mode: ignore
   log_statements:
